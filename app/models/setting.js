@@ -41,10 +41,6 @@ export default Model.extend(ValidationEngine, {
     ogTitle: attr('string'),
     ogDescription: attr('string'),
     ogImage: attr('string'),
-    mailgunApiKey: attr('string'),
-    mailgunDomain: attr('string'),
-    mailgunBaseUrl: attr('string'),
-    emailTrackOpens: attr('boolean'),
     portalButton: attr('boolean'),
     portalName: attr('boolean'),
     portalPlans: attr('json-string'),
@@ -75,8 +71,18 @@ export default Model.extend(ValidationEngine, {
     /**
     * Newsletter settings
     */
+    emailTrackOpens: attr('boolean'),
     newsletterShowHeader: attr('boolean'),
     newsletterBodyFontCategory: attr('string'),
     newsletterShowBadge: attr('boolean'),
-    newsletterFooterContent: attr('string')
+    newsletterFooterContent: attr('string'),
+    /**
+     * Bulk email provider settings
+     */
+    bulkEmailProvider: attr('string'),
+    mailgunApiKey: attr('string'),
+    mailgunDomain: attr('string'),
+    mailgunBaseUrl: attr('string'),
+    sesAccessKeyId: attr('string'),
+    sesSecretAccessKey: attr('string')
 });

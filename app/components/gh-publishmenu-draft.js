@@ -47,6 +47,7 @@ export default Component.extend({
         return '';
     }),
 
+    // TODO: Make bulk email provider agnostic
     canSendEmail: computed('feature.labs.members', 'post.{displayName,email}', 'settings.{mailgunApiKey,mailgunDomain,mailgunBaseUrl}', 'config.mailgunIsConfigured', function () {
         let membersEnabled = this.feature.get('labs.members');
         let mailgunIsConfigured = this.get('settings.mailgunApiKey') && this.get('settings.mailgunDomain') && this.get('settings.mailgunBaseUrl') || this.get('config.mailgunIsConfigured');
