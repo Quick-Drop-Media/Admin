@@ -4,8 +4,13 @@ import {reads} from '@ember/object/computed';
 import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency';
 
+const MAILGUN = {label: 'Mailgun', value: 'mailgun'};
+const AWS_SES = {label: 'AWS SES', value: 'ses'};
+const BULK_EMAIL_PROVIDERS = [MAILGUN, AWS_SES];
+
 const US = {flag: '🇺🇸', name: 'US', baseUrl: 'https://api.mailgun.net/v3'};
 const EU = {flag: '🇪🇺', name: 'EU', baseUrl: 'https://api.eu.mailgun.net/v3'};
+const MAILGUN_REGIONS = [US, EU];
 
 const CURRENCIES = [
     {
@@ -115,7 +120,7 @@ export default Component.extend({
             return US;
         }
 
-        return [US, EU].find((region) => {
+        return MAILGUN_REGIONS.find((region) => {
             return region.baseUrl === this.settings.get('mailgunBaseUrl');
         });
     }),
@@ -145,8 +150,16 @@ export default Component.extend({
         };
     }),
 
+    sesSettings: computed('settings.{sesAccessKeyId,sesSecretAccessKey}', function () {
+        return {
+            accessKeyId: this.get('settings.sesAccessKeyId') || '',
+            secretAccessKey: this.get('settings.sesSecretAccessKey') || ''
+        };
+    }),
+
     init() {
         this._super(...arguments);
+        this.set('bulkEmailProviders', BULK_EMAIL_PROVIDERS);
         this.set('mailgunRegions', [US, EU]);
         this.set('currencies', CURRENCIES);
         this.set('replyAddresses', REPLY_ADDRESSES);
@@ -174,6 +187,11 @@ export default Component.extend({
             this.setDefaultContentVisibility(value);
         },
 
+        setBulkEmailProvider(event) {
+            const newBulkEmailProvider = event.value;
+            this.set('settings.bulkEmailProvider', newBulkEmailProvider);
+        },
+
         setMailgunDomain(event) {
             this.set('settings.mailgunDomain', event.target.value);
             if (!this.get('settings.mailgunBaseUrl')) {
@@ -190,6 +208,14 @@ export default Component.extend({
 
         setMailgunRegion(region) {
             this.set('settings.mailgunBaseUrl', region.baseUrl);
+        },
+
+        setSesAccessKeyId(event) {
+            this.set('settings.sesAccessKeyId', event.target.value);
+        },
+
+        setSesSecretAccessKey(event) {
+            this.set('settings.sesSecretAccessKey', event.target.value);
         },
 
         setFromAddress(fromAddress) {
@@ -241,7 +267,7 @@ export default Component.extend({
                 }
 
                 const updatedPlans = this.get('settings.stripePlans').map((plan) => {
-                    if (plan.name !== 'Complimentary') {
+                    if (plan.name !== 'Complim entary') {
                         let newAmount;
                         if (plan.interval === 'year') {
                             newAmount = yearlyAmount * 100;
