@@ -12,6 +12,27 @@ const US = {flag: '🇺🇸', name: 'US', baseUrl: 'https://api.mailgun.net/v3'}
 const EU = {flag: '🇪🇺', name: 'EU', baseUrl: 'https://api.eu.mailgun.net/v3'};
 const MAILGUN_REGIONS = [US, EU];
 
+const SES_REGIONS = [
+    {label: 'us-east-1', value: 'us-east-1'},
+    {label: 'us-east-2', value: 'us-east-2'},
+    {label: 'us-west-1', value: 'us-west-1'},
+    {label: 'us-west-2', value: 'us-west-2'},
+    {label: 'us-south-1', value: 'us-south-1'},
+    {label: 'ap-south-1', value: 'ap-south-1'},
+    {label: 'ap-northeast-1', value: 'ap-northeast-1'},
+    {label: 'ap-northeast-2', value: 'ap-northeast-2'},
+    {label: 'ap-southeast-1', value: 'ap-southeast-1'},
+    {label: 'ap-southeast-2', value: 'ap-southeast-2'},
+    {label: 'ca-central-1', value: 'ca-central-1'},
+    {label: 'eu-central-1', value: 'eu-central-1'},
+    {label: 'eu-west-1', value: 'eu-west-1'},
+    {label: 'eu-west-2', value: 'eu-west-2'},
+    {label: 'eu-west-3', value: 'eu-west-3'},
+    {label: 'eu-north-1', value: 'eu-north-1'},
+    {label: 'me-south-3', value: 'me-south-3'},
+    {label: 'sa-south-1', value: 'sa-south-1'}
+];
+
 const CURRENCIES = [
     {
         label: 'USD - US Dollar', value: 'usd', symbol: '$'
@@ -98,6 +119,10 @@ export default Component.extend({
         return BULK_EMAIL_PROVIDERS.findBy('value', this.get('settings.bulkEmailProvider'));
     }),
 
+    selectedSesRegion: computed('settings.sesRegion', function () {
+        return SES_REGIONS.findBy('value', this.get('settings.sesRegion'));
+    }),
+
     disableUpdateFromAddressButton: computed('fromAddress', function () {
         const savedFromAddress = this.get('settings.membersFromAddress') || '';
         if (!savedFromAddress.includes('@') && this.blogDomain) {
@@ -155,16 +180,18 @@ export default Component.extend({
         };
     }),
 
-    sesSettings: computed('settings.{sesAccessKeyId,sesSecretAccessKey}', function () {
+    sesSettings: computed('settings.{sesAccessKeyId,sesSecretAccessKey,sesRegion}', function () {
         return {
             accessKeyId: this.get('settings.sesAccessKeyId') || '',
-            secretAccessKey: this.get('settings.sesSecretAccessKey') || ''
+            secretAccessKey: this.get('settings.sesSecretAccessKey') || '',
+            region: this.get('settings.sesRegion') || 'us-east-1'
         };
     }),
 
     init() {
         this._super(...arguments);
         this.set('bulkEmailProviders', BULK_EMAIL_PROVIDERS);
+        this.set('sesRegions', SES_REGIONS);
         this.set('mailgunRegions', [US, EU]);
         this.set('currencies', CURRENCIES);
         this.set('replyAddresses', REPLY_ADDRESSES);
@@ -221,6 +248,10 @@ export default Component.extend({
 
         setSesSecretAccessKey(event) {
             this.set('settings.sesSecretAccessKey', event.target.value);
+        },
+
+        setSesRegion(event) {
+            this.set('settings.sesRegion', event.value);
         },
 
         setFromAddress(fromAddress) {

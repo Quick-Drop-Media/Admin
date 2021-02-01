@@ -479,8 +479,23 @@
                 </GhFormGroup>
 
                 {{else if (eq this.selectedBulkEmailProvider.value 'ses')}}
+                <GhFormGroup @class="for-select gh-labs-members-defaultemaildd">
+                    <label class="fw6 f8" for="bulk-email-provider">AWS region</label>
+                    <span class="gh-select mt1">
+                        {{one-way-select this.selectedSesRegion
+                            id="ses-region"
+                            name="ses-region"
+                            options=(readonly this.sesRegions)
+                            optionValuePath="value"
+                            optionLabelPath="label"
+                            update=(action "setSesRegion")
+                        }}
+                        {{svg-jar "arrow-down-small"}}
+                    </span>
+                </GhFormGroup>
+
                 <GhFormGroup>
-                    <label class="fw6 f8">Access Key ID</label>
+                    <label class="fw6 f8">Access key ID</label>
                     <GhTextInput
                         @value={{readonly this.sesSettings.accessKeyId}}
                         @input={{action "setSesAccessKeyId"}}
@@ -492,7 +507,7 @@
                 </GhFormGroup>
 
                 <GhFormGroup>
-                    <label class="fw6 f8">Secret Access Key</label>
+                    <label class="fw6 f8">Secret access key</label>
                     <GhTextInput
                         @type="password"
                         @value={{readonly this.sesSettings.secretAccessKey}}
