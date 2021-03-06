@@ -38,7 +38,7 @@
     {{else if (or this.retryEmail.isRunning this.post.email.isFailure)}}
         {{!-- Mail failed to send --}}
 
-        <div class="ba b--whitegrey bg-white br3 gh-box-error-border">
+        <div class="gh-box-error">
             <div class="flex pa5 pt4 pb4 items-center bb b--whitegrey">
                 <div class="w16 flex flex-column items-center">
                     <span class="db mr4 mt3">{{svg-jar "warning" class="w7 h7 fill-red"}}</span>
@@ -91,7 +91,7 @@
         {{#if this.mailgunError}}
             <p class="gh-box gh-box-alert settings-menu-mailgun-alert">
                 {{svg-jar "info" class="w5 h5 fill-yellow nl1"}}
-                You need to configure Mailgun in <LinkTo @route="settings.labs" data-test-nav="labs">Labs → Members settings</LinkTo> to enable email newsletters.
+                You need to configure Mailgun in <LinkTo @route="settings.members-email" data-test-nav="labs">Settings &rarr; Email newsletter</LinkTo> to enable email newsletters.
             </p>
         {{/if}}
 

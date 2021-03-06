@@ -1,4 +1,4 @@
-<div class="settings-menu-container">
+<div class="settings-menu-container {{if (and this.isViewingSubview (not (eq this.subview "email-settings"))) "settings-menu-container-wide"}}">
     <div id="entry-controls">
         <div class="{{if this.isViewingSubview 'settings-menu-pane-out-left' 'settings-menu-pane-in'}} settings-menu settings-menu-pane">
             <div class="settings-menu-header">
@@ -76,7 +76,7 @@
                 {{/unless}}
 
 
-                {{#if (and this.feature.members this.showVisibilityInput)}}
+                {{#if this.showVisibilityInput}}
                     <div class="form-group">
                         <label for="visibility-input">Post access</label>
                         <GhPsmVisibilityInput @post={{this.post}} @triggerId="visibility-input" />
@@ -129,7 +129,7 @@
                         </button>
                         {{svg-jar "arrow-right"}}
                     </li>
-                    {{#if (and this.feature.members (eq this.post.displayName "post") showEmailNewsletter)}}
+                    {{#if (and this.post.isPost showEmailNewsletter)}}
                         <li class="nav-list-item" {{action "showSubview" "email-settings"}} data-test-button="email-settings">
                             <button type="button">
                                 <b>Email newsletter</b>
@@ -175,7 +175,7 @@
             </div>{{! .settings-menu-content }}
         </div>{{! .post-settings-menu }}
 
-        <div class="{{if this.isViewingSubview 'settings-menu-pane-in' 'settings-menu-pane-out-right'}} settings-menu settings-menu-pane">
+        <div class="{{if this.isViewingSubview 'settings-menu-pane-in' 'settings-menu-pane-out-right'}} settings-menu settings-menu-pane {{unless (eq this.subview "email-settings") "settings-menu-pane-wide"}}">
             <div class="active">
                 {{#if this.isViewingSubview}}
                     {{#if (eq this.subview "meta-data")}}
@@ -193,6 +193,7 @@
                                         @class="post-setting-meta-title"
                                         @id="meta-title"
                                         @name="post-setting-meta-title"
+                                        @placeholder={{this.seoTitle}}
                                         @value={{readonly this.metaTitleScratch}}
                                         @input={{action (mut this.metaTitleScratch) value="target.value"}}
                                         @focus-out={{action "setMetaTitle" this.metaTitleScratch}}
@@ -208,6 +209,7 @@
                                         @class="post-setting-meta-description"
                                         @id="meta-description"
                                         @name="post-setting-meta-description"
+                                        @placeholder={{truncate this.seoDescription 150}}
                                         @value={{readonly this.metaDescriptionScratch}}
                                         @input={{action (mut this.metaDescriptionScratch) value="target.value"}}
                                         @focus-out={{action "setMetaDescription" this.metaDescriptionScratch}}
@@ -232,10 +234,16 @@
 
                                 <div class="form-group">
                                     <label>Search Engine Result Preview</label>
-                                    <div class="seo-preview">
-                                        <div class="seo-preview-title">{{truncate this.seoTitle 70}}</div>
-                                        <div class="seo-preview-link">{{truncate this.seoURL 70}}</div>
-                                        <div class="seo-preview-description">{{truncate this.seoDescription 300}}</div>
+                                    <div class="gh-seo-container">
+                                        <div class="gh-seo-preview">
+                                            <div class="flex mb7">
+                                                {{svg-jar "google"}}
+                                                <div class="gh-seo-search-bar">{{svg-jar "google-search"}}</div>
+                                            </div>
+                                            <div class="gh-seo-preview-link">{{this.config.blogDomain}} › {{#if this.ghostPaths.subdir}}{{this.ghostPaths.subdir}} › {{/if}}{{@post.slug}}</div>
+                                            <div class="gh-seo-preview-title">{{this.seoTitle}}</div>
+                                            <div class="gh-seo-preview-desc">{{this.seoDescription}}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -280,7 +288,7 @@
                                         @class="post-setting-twitter-description"
                                         @id="twitter-description"
                                         @name="post-setting-twitter-description"
-                                        @placeholder={{truncate this.twitterDescription 155}}
+                                        @placeholder={{truncate this.twitterDescription 150}}
                                         @stopEnterKeyDownPropagation="true"
                                         @value={{readonly this.twitterDescriptionScratch}}
                                         @input={{action (mut this.twitterDescriptionScratch) value="target.value"}}
@@ -290,20 +298,17 @@
                                 </GhFormGroup>
 
                                 <div class="form-group">
-                                    <label>Preview</label>
-                                    <div class="gh-twitter-preview">
+                                    <label>Twitter preview</label>
+                                    <div class="gh-social-twitter-post-preview">
                                         {{#if this.twitterImage}}
-                                        <div class="gh-twitter-preview-image" style={{background-image-style this.twitterImage}}></div>
+                                            <div class="gh-social-twitter-preview-image" style={{background-image-style this.twitterImage}}></div>
                                         {{/if}}
-                                        <div class="gh-twitter-preview-content">
-                                            <div class="gh-twitter-preview-title">{{this.twitterTitle}}</div>
-                                            <div class="gh-twitter-preview-description">{{truncate this.twitterDescription 155}}</div>
-                                            <div class="gh-twitter-preview-footer">
-                                                <div class="gh-twitter-preview-footer-left">
-                                                    {{this.config.blogDomain}}
-                                                </div>
-                                                <div class="gh-twitter-preview-footer-right">
-                                                </div>
+                                        <div class="gh-social-twitter-preview-content">
+                                            <div class="gh-social-twitter-preview-title">{{this.twitterTitle}}</div>
+                                            <div class="gh-social-twitter-preview-desc">{{truncate this.twitterDescription}}</div>
+                                            <div class="gh-social-twitter-preview-meta">
+                                                {{svg-jar "twitter-link"}}
+                                                {{this.config.blogDomain}}
                                             </div>
                                         </div>
                                     </div>
@@ -358,7 +363,7 @@
                                     <GhTextarea
                                         @class="post-setting-og-description"
                                         @id="og-description" @name="post-setting-og-description"
-                                        @placeholder={{truncate this.facebookDescription 160}}
+                                        @placeholder={{truncate this.facebookDescription 150}}
                                         @value={{readonly this.ogDescriptionScratch}}
                                         @input={{action (mut this.ogDescriptionScratch) value="target.value"}}
                                         @focus-out={{action "setOgDescription" this.ogDescriptionScratch}}
@@ -368,20 +373,19 @@
                                 </GhFormGroup>
 
                                 <div class="form-group">
-                                    <label>Preview</label>
-                                    <div class="gh-og-preview">
+                                    <label>Facebook preview</label>
+                                    <div class="gh-social-og-preview no-container">
                                         {{#if this.facebookImage}}
-                                        <div class="gh-og-preview-image" style={{background-image-style this.facebookImage}}></div>
+                                            <div class="gh-social-og-preview-image" style={{background-image-style this.facebookImage}}></div>
                                         {{/if}}
-                                        <div class="gh-og-preview-content">
-                                            <div class="gh-og-preview-title">{{truncate this.facebookTitle 88}}</div>
-                                            <div class="gh-og-preview-description">{{truncate this.facebookDescription 300}}</div>
-                                            <div class="gh-og-preview-footer">
-                                                <div class="gh-og-preview-footer-left">
-                                                    {{this.config.blogDomain}} <span class="gh-og-preview-footer-left-divider">|</span> by <span class="gh-og-preview-footer-author">{{author-names this.post.authors}}</span>
+                                        <div class="gh-social-og-preview-bookmark">
+                                            {{!-- Ensures description is hidden if title exceeds one line --}}
+                                            <div class="gh-social-og-preview-content">
+                                                <div class="gh-social-og-preview-meta">
+                                                    {{this.config.blogDomain}}
                                                 </div>
-                                                <div class="gh-og-preview-footer-right">
-                                                </div>
+                                                <div class="gh-social-og-preview-title">{{truncate this.facebookTitle}}</div>
+                                                <div class="gh-social-og-preview-desc">{{truncate this.facebookDescription}}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -433,19 +437,3 @@
         </div>
     </div>
 </div>
-
-{{!--
-    _showThrobbers is on a timer so that throbbers don't get positioned until
-    the slide-in animation has finished and it gets toggled when the meta
-    pane is shown
---}}
-{{#if this._showThrobbers}}
-    {{#unless this.session.user.isAuthorOrContributor}}
-        <GhTourItem @throbberId="featured-post"
-            @target="label[for='featured'] p"
-            @throbberAttachment="middle middle"
-            @throbberOffset="0px -20px"
-            @popoverTriangleClass="bottom-right"
-        />
-    {{/unless}}
-{{/if}}

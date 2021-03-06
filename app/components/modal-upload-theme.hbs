@@ -20,11 +20,9 @@
         {{#if this.theme}}
             {{#if this.hasWarningsOrErrors}}
                 <p>
+                    The theme <strong>"{{this.themeName}}"</strong> was installed successfully but we detected some {{if this.validationErrors "errors" "warnings"}}.
                     {{#if this.canActivateTheme}}
-                        The theme <strong>"{{this.themeName}}"</strong> was uploaded successfully but we detected some {{#if this.validationErrors}}errors{{else}}warnings{{/if}}. You are still able to activate and use the theme but it is recommended to fix these {{#if this.validationErrors}}errors{{else}}warnings{{/if}} before you do so.
-                    {{else}}
-                        The theme <strong>"{{this.themeName}}"</strong> was uploaded successfully but we detected some
-                        {{#if this.validationErrors}}errors{{else}}warnings{{/if}}.
+                        You are still able to activate and use the theme but it is recommended to fix these {{if this.validationErrors "errors" "warnings"}} before you do so.
                     {{/if}}
                 </p>
 
@@ -131,7 +129,7 @@
                 </button>
             {{/if}}
             {{#if (or this.validationErrors this.fatalValidationErrors)}}
-                <button {{action "reset"}} class="gh-btn gh-btn-blue ml2" data-test-try-again-button>
+                <button {{action "reset"}} class="gh-btn gh-btn-black ml2" data-test-try-again-button>
                     <span>Retry</span>
                 </button>
             {{/if}}

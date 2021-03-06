@@ -5,13 +5,6 @@
     background: none;
 }
 
-.gh-invited-users .apps-grid-cell:hover + .apps-grid-cell .apps-card-app,
-.gh-invited-users .apps-grid-cell:hover .apps-card-app {
-    border-color: var(--lightgrey);
-    padding-left: 0;
-    margin-left: 16px;
-}
-
 .gh-invited-users .gh-badge {
     text-transform: none;
 }
@@ -78,7 +71,6 @@
     background-position: center center;
     background-size: cover;
     border-radius: 100%;
-    box-shadow: var(--white) 0 0 0 3px;
 }
 
 .user-list-item-figure img {
@@ -118,9 +110,9 @@
 }
 
 .gh-badge.administrator {
-    background: color-mod(var(--purple) a(15%));
+    background: color-mod(var(--pink) a(15%));
     text-transform: uppercase;
-    color: var(--purple-d2);
+    color: var(--pink-d2);
 }
 
 .gh-badge.editor {
@@ -145,6 +137,7 @@
     background: var(--lightgrey);
     text-transform: uppercase;
     color: var(--middarkgrey);
+    margin-left: 1.2rem;
 }
 
 .gh-badge.locked {
@@ -173,6 +166,7 @@
 .invite-new-user .form-group:nth-of-type(1) {
     float: left;
     width: 60%;
+    padding-right: 10px;
 }
 
 @media (max-width: 500px) {
@@ -184,8 +178,7 @@
 
 .invite-new-user .form-group:nth-of-type(2) {
     float: left;
-    margin-left: 10px;
-    width: 35%;
+    width: 40%;
 }
 
 @media (max-width: 500px) {
@@ -201,7 +194,7 @@
     width: 100%;
 }
 
-.invite-new-user .gh-btn-green {
+.invite-new-user .gh-btn-black {
     margin: 0;
     width: 100%;
 }
