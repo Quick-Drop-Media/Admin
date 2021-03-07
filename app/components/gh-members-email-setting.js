@@ -123,6 +123,8 @@ export default Component.extend({
 
     init() {
         this._super(...arguments);
+        this.set('bulkEmailProviders', BULK_EMAIL_PROVIDERS);
+        this.set('sesRegions', SES_REGIONS);
         this.set('mailgunRegions', [US, EU]);
         this.set('replyAddresses', REPLY_ADDRESSES);
     },
@@ -134,6 +136,11 @@ export default Component.extend({
 
         closeEmailDesignSettings() {
             this.set('showEmailDesignSettings', false);
+        },
+
+        setBulkEmailProvider(event) {
+            const newBulkEmailProvider = event.value;
+            this.set('settings.bulkEmailProvider', newBulkEmailProvider);
         },
 
         setMailgunDomain(event) {
@@ -152,6 +159,18 @@ export default Component.extend({
 
         setMailgunRegion(region) {
             this.set('settings.mailgunBaseUrl', region.baseUrl);
+        },
+
+        setSesAccessKeyId(event) {
+            this.set('settings.sesAccessKeyId', event.target.value);
+        },
+
+        setSesSecretAccessKey(event) {
+            this.set('settings.sesSecretAccessKey', event.target.value);
+        },
+
+        setSesRegion(event) {
+            this.set('settings.sesRegion', event.value);
         },
 
         setFromAddress(fromAddress) {
