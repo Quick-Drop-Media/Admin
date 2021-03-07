@@ -133,7 +133,7 @@
             <div class="gh-expandable-header">
                 <div>
                     <h4 class="gh-expandable-title">Email newsletter settings</h4>
-                    <p class="gh-expandable-description">The <a href="https://www.mailgun.com/" target="_blank" rel="nofollow noopener">Mailgun API</a> is used for bulk email newsletter delivery. <a href="https://ghost.org/docs/faq/mailgun-newsletters/" target="_blank" rel="noopener">Why is this required?</a></p>
+                    <p class="gh-setting-desc pa0 ma0">An external bulk email provider is used for bulk email newsletter delivery. <a href="https://ghost.org/faq/mailgun-newsletters/" target="_blank" rel="noopener">Why is this required?</a></p>
                 </div>
                 <button type="button" class="gh-btn" {{action (toggle "membersEmailOpen" this)}} data-test-toggle-membersemail>
                     <span>{{if this.membersEmailOpen "Close" "Expand"}}</span>
@@ -142,6 +142,21 @@
             <div class="gh-expandable-content">
                 {{#liquid-if this.membersEmailOpen}}
                 <div class="flex flex-column w-100 w-50-l flex">
+                    <GhFormGroup @class="for-select gh-labs-members-defaultemaildd">
+                    <label class="fw6 f8" for="bulk-email-provider">Bulk Email Provider</label>
+                    <span class="gh-select mt1">
+                        {{one-way-select this.selectedBulkEmailProvider
+                            id="bulk-email-provider"
+                            name="bulk-email-provider"
+                            options=(readonly this.bulkEmailProviders)
+                            optionValuePath="value"
+                            optionLabelPath="label"
+                            update=(action "setBulkEmailProvider")
+                        }}
+                        {{svg-jar "arrow-down-small"}}
+                    </span>
+                </GhFormGroup>
+                {{#liquid-if (eq this.selectedBulkEmailProvider.value 'mailgun')}}
                     <div class="flex items-center">
                         <GhFormGroup @class="gh-labs-mailgun-region">
                             <label class="fw6 f8">Mailgun region</label>
@@ -186,6 +201,44 @@
                             Find your Mailgun API keys here &raquo;
                         </a>
                     </GhFormGroup>
+                    {{else if (eq this.selectedBulkEmailProvider.value 'ses')}}
+                <GhFormGroup @class="for-select gh-labs-members-defaultemaildd">
+                    <label class="fw6 f8" for="bulk-email-provider">AWS region</label>
+                    <span class="gh-select mt1">
+                        {{one-way-select this.selectedSesRegion
+                            id="ses-region"
+                            name="ses-region"
+                            options=(readonly this.sesRegions)
+                            optionValuePath="value"
+                            optionLabelPath="label"
+                            update=(action "setSesRegion")
+                        }}
+                        {{svg-jar "arrow-down-small"}}
+                    </span>
+                </GhFormGroup>
+
+                <GhFormGroup>
+                    <label class="fw6 f8">Access key ID</label>
+                    <GhTextInput
+                        @value={{readonly this.sesSettings.accessKeyId}}
+                        @input={{action "setSesAccessKeyId"}}
+                        @class="mt1"
+                    />
+                    <a href="https://docs.aws.amazon.com/ses/latest/DeveloperGuide/get-aws-keys.html" target="_blank" class="mt1 fw4 f8">
+                        Find your AWS access keys here &raquo;
+                    </a>
+                </GhFormGroup>
+
+                <GhFormGroup>
+                    <label class="fw6 f8">Secret access key</label>
+                    <GhTextInput
+                        @type="password"
+                        @value={{readonly this.sesSettings.secretAccessKey}}
+                        @input={{action "setSesSecretAccessKey"}}
+                        @class="mt1 password" @autocomplete="new-password"
+                    />
+                </GhFormGroup>
+                {{/liquid-if}}
                 </div>
                 {{/liquid-if}}
             </div>
