@@ -134,7 +134,7 @@
     top: 0;
     left: 29px;
     bottom: 0;
-    background: color-mod(var(--lightgrey) l(-5%) s(-10%));
+    background: var(--input-border-color);
 }
 
 .gh-portal-settings .input-color input:focus + .color-picker-horizontal-divider {
@@ -478,10 +478,10 @@
 
 .gh-portal-links-table tr.header .gh-portal-links-cell {
     font-size: 1.3rem;
-    font-weight: 400;
+    font-weight: 500;
     cursor: pointer;
     text-transform: none;
-    color: var(--blue);
+    color: var(--green);
 }
 
 .gh-portal-links-table tr td:last-of-type {
@@ -579,5 +579,5 @@
 }
 
 .gh-portal-setting-section.redirects p {
-    margin-top: 16px;
+    margin-top: 4px;
 }
