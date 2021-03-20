@@ -100,7 +100,7 @@ export default Component.extend({
             return US;
         }
 
-       return MAILGUN_REGIONS.find((region) => {
+        return MAILGUN_REGIONS.find((region) => {
             return region.baseUrl === this.settings.get('mailgunBaseUrl');
         });
     }),
