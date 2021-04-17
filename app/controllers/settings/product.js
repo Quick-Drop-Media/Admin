@@ -4,12 +4,11 @@ import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency-decorators';
 import {tracked} from '@glimmer/tracking';
 
-export default class MembersAccessController extends Controller {
+export default class ProductController extends Controller {
     @service settings;
 
     @tracked showLeaveSettingsModal = false;
-    @tracked subscriptionAccessOpen = false;
-    @tracked postAccessOpen = false;
+    @tracked showPriceModal = false;
 
     leaveRoute(transition) {
         if (this.settings.get('hasDirtyAttributes')) {
@@ -33,35 +32,12 @@ export default class MembersAccessController extends Controller {
     }
 
     @action
-    toggleSubscriptionAccess() {
-        this.subscriptionAccessOpen = !this.subscriptionAccessOpen;
-    }
-
-    @action
-    togglePostAccess() {
-        this.postAccessOpen = !this.postAccessOpen;
-    }
-
-    @action
-    setDefaultContentVisibility(value) {
-        this.settings.set('defaultContentVisibility', value);
-    }
-
-    @action
-    setSubscriptionAccess(value) {
-        switch (value) {
-        case 'anyone':
-            this.settings.set('membersAllowFreeSignup', true);
-            break;
-
-        case 'invite':
-            this.settings.set('membersAllowFreeSignup', false);
-            break;
-        }
+    closePriceModal() {
+        this.showPriceModal = false;
     }
 
     @task({drop: true})
-    *saveSettingsTask() {
+    *saveTask() {
         return yield this.settings.save();
     }
 }
