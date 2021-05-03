@@ -147,6 +147,15 @@
 /* User invitation modal
 /* ---------------------------------------------------------- */
 
+@media (max-height: 900px) {
+    .fullscreen-modal-invite-user {
+        overflow-y: auto;
+    }
+    .fullscreen-modal-invite-user .modal-content {
+        box-shadow: none !important;
+    }
+}
+
 .invite-new-user .modal-content {
     width: 100%;
     max-width: 600px;
@@ -204,19 +213,6 @@
 
 .gh-roles-container .gh-radio-content {
     margin-right: 2.4rem;
-}
-
-.gh-roles-container .gh-radio-label {
-    padding-bottom: 4px;
-    line-height: 1.1em;
-    font-weight: 600;
-}
-
-.gh-roles-container .gh-radio-desc {
-    color: var(--midgrey);
-    font-size: 1.3rem;
-    line-height: 1.2em;
-    font-weight: 400;
 }
 
 .gh-roles-container .popover {

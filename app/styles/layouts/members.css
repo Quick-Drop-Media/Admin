@@ -627,6 +627,8 @@ textarea.gh-member-details-textarea {
 
 .gh-new-member-avatar {
     background: var(--midlightgrey-l1);
+    width: 81px;
+    height: 81px;
 }
 
 .gh-member-cancels-on-label {
@@ -1545,4 +1547,172 @@ p.gh-members-import-errordetail:first-of-type {
 
 .gh-cp-data-summary:not(:last-of-type) {
     margin-bottom: 24px;
+}
+
+.gh-cp-table {
+    margin: -8px 0 0;
+}
+
+.gh-cp-table .gh-member-stripe-label {
+    width: 40px;
+    color: var(--middarkgrey);
+}
+
+.gh-cp-table-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 1.3rem;
+}
+
+/* Member's product list */
+.gh-memberproduct-name {
+    margin-bottom: 6px !important;
+}
+
+.gh-memberproduct-actionlist {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    opacity: 0;
+}
+
+.gh-memberproduct-list .gh-list-row:hover {
+    background: none !important;
+}
+
+.gh-memberproduct-list .gh-list-row:hover .gh-memberproduct-actionlist {
+    opacity: 1;
+}
+
+.gh-memberproduct-actionlist a,
+.gh-memberproduct-actionlist button {
+    line-height: 0;
+    margin-left: 24px;
+    color: var(--darkgrey);
+    font-weight: 500;
+}
+
+.gh-memberproduct-actionlist button.archive {
+    color: var(--red);
+}
+
+.gh-cp-memberproduct-showmore {
+    line-height: 1;
+    margin-top: 5px;
+}
+
+.gh-cp-memberproduct-showmore label {
+    display: inline-block;
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.5em;
+    color: var(--middarkgrey);
+    margin: 4px 0 2px;
+    cursor: pointer;
+}
+
+.gh-cp-memberproduct-showmore label:hover {
+    color: var(--darkgrey);
+}
+
+.gh-cp-memberproduct-pricelabel {
+    font-weight: 600;
+}
+
+.gh-cp-memberproduct-showmore label span.archived {
+    background: var(--lightgrey-l2);
+    color: var(--midgrey);
+    font-size: 1.2rem;
+}
+
+.gh-cp-memberproduct-showmore label svg {
+    width: 9px;
+    height: 9px;
+    margin-right: 2px;
+}
+
+.gh-cp-memberproduct-showmore label svg path {
+    fill: var(--midgrey);
+}
+
+.gh-cp-memberproduct-showmore .details {
+    display: none;
+    flex-direction: column;
+    font-size: 1.3rem;
+    line-height: 1.7em;
+    color: var(--middarkgrey);
+    margin: 2px 0 16px 15px;
+}
+
+.gh-cp-memberproduct-showmore .details .actions {
+    display: flex;
+    margin-top: 3px;
+}
+
+.gh-cp-memberproduct-showmore .details .actions button span {
+    font-size: 1.3rem;
+}
+
+.gh-cp-memberproduct-showmore input[type=checkbox] {
+    display: none;
+}
+
+.gh-cp-memberproduct-showmore input[type=checkbox]:checked ~ .details {
+    display: flex;
+}
+
+.gh-cp-memberproduct-showmore input[type=checkbox]:checked ~ label svg {
+    transform: rotate(90deg);
+}
+
+.gh-memberproduct-archived .gh-memberproduct-name {
+    opacity: 0.5;
+}
+
+.gh-memberproduct-add-product .gh-list-data {
+    padding: 12px 0;
+}
+
+.gh-btn-addproduct svg path {
+    fill: var(--green);
+}
+
+.gh-member-product-memberdetails {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 12px 0 24px;
+}
+
+.gh-member-product-memberdetails .gh-member-gravatar {
+    margin: 0;
+}
+
+.gh-member-product-memberdetails h3 {
+    margin: 12px 0 0;
+    font-size: 1.9rem;
+    line-height: 1;
+}
+
+.gh-member-product-memberdetails p {
+    margin: 0;
+}
+
+.gh-cp-memberproduct-noproduct {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.4rem;
+    color: var(--midgrey);
+    padding: 48px 0;
+}
+
+.gh-btn-add-memberproduct[disabled],
+.gh-btn-add-memberproduct[disabled]:hover {
+    background: var(--lightgrey-l1) !important;
+}
+
+.gh-btn-add-memberproduct[disabled] span {
+    color: var(--midgrey);
 }

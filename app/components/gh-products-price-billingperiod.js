@@ -1,20 +1,35 @@
-import Component from '@ember/component';
+import Component from '@glimmer/component';
+import {action} from '@ember/object';
+import {inject as service} from '@ember/service';
 
 const PERIODS = [
-    {label: 'Daily', period: 'daily'},
-    {label: 'Weekly', period: 'members'},
-    {label: 'Monthly', period: 'monthly'},
-    {label: 'Every 3 months', period: '3-months'},
-    {label: 'Every 6 months', period: '6-months'},
-    {label: 'Yearly', period: 'yearly'},
-    {label: 'Custom', period: 'custom'},
-    {label: 'One time', period: 'one-time'},
-    {label: 'Unbilled', period: 'unbilled'}
+    {label: 'Monthly', period: 'month'},
+    {label: 'Yearly', period: 'year'}
 ];
 
-export default Component.extend({
-    init() {
-        this._super(...arguments);
+export default class GhProductsPriceBillingPeriodComponent extends Component {
+    @service feature;
+    @service session;
+    @service settings;
+
+    constructor() {
+        super(...arguments);
         this.availablePeriods = PERIODS;
     }
-});
+
+    get value() {
+        const {value} = this.args;
+        return value;
+    }
+    get disabled() {
+        const {disabled} = this.args;
+        return disabled || false;
+    }
+
+    @action
+    updatePeriod(newPeriod) {
+        if (this.args.updatePeriod) {
+            this.args.updatePeriod(this.args.value, newPeriod);
+        }
+    }
+}

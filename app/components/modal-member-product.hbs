@@ -1,0 +1,75 @@
+{{!-- <header class="modal-header" data-test-modal="webhook-form">
+    <h1 data-test-text="title">Add product</h1>
+</header> --}}
+<button class="close" href title="Close" {{action "closeModal"}} {{action (optional this.noop) on="mouseDown"}}>
+    {{svg-jar "close"}}
+</button>
+
+<form>
+<div class="modal-body">
+
+    <div class="gh-main-section-block">
+        <div class="gh-main-section-content gh-member-product-memberdetails">
+            <GhMemberAvatar
+                @member={{this.member}}
+                @sizeClass={{if this.member.name 'f-subheadline fw4 lh-zero tracked-1' 'f-headline fw4 lh-zero tracked-1'}}
+                @containerClass="w20 h20 mr4 gh-member-detail-avatar"
+            />
+            <h3>{{or this.member.name this.member.email}}</h3>
+            {{#if (and this.member.name this.member.email)}}
+                <p>
+                    {{this.member.email}}
+                </p>
+            {{/if}}
+        </div>
+
+        <div class="gh-main-section-content grey gh-member-product-form-block">
+            <GhFormGroup>
+                <label for="product" class="fw6">Product</label>
+                <span class="gh-select">
+                    <OneWaySelect
+                        @options={{this.products}}
+                        @optionValuePath="id"
+                        @optionLabelPath="name"
+                        @update={{this.setProduct}}
+                    />
+                    {{svg-jar "arrow-down-small"}}
+                </span>
+            </GhFormGroup>
+            <GhFormGroup>
+                <label for="price" class="fw6">Price</label>
+                <span class="gh-select">
+                    <OneWaySelect
+                        @options={{this.prices}}
+                        @optionValuePath="id"
+                        @optionLabelPath="label"
+                        @update={{this.setPrice}}
+                    />
+                    {{svg-jar "arrow-down-small"}}
+                </span>
+                {{#if this.cannotAddPrice}}
+                <p>Please select a price with zero value. You can add non-zero prices on <a href="https://dashboard.stripe.com" target="_blank">Stripe Dashboard</a>.</p>
+                {{/if}}
+            </GhFormGroup>
+        </div>
+    </div>
+</div>
+</form>
+
+<div class="modal-footer">
+    <button
+        class="gh-btn"
+        {{action "closeModal"}}
+        {{!-- disable mouseDown so it does not trigger focus-out validations --}}
+        {{action (optional this.noop) on="mouseDown"}}
+        data-test-button="cancel-webhook"
+    >
+        <span>Cancel</span>
+    </button>
+    <GhTaskButton @buttonText="Add product to member"
+        @successText={{this.successText}}
+        @task={{this.addPriceTask}}
+        @disabled={{this.cannotAddPrice}}
+        @class="gh-btn gh-btn-black gh-btn-icon gh-btn-add-memberproduct"
+        data-test-button="save-webhook" />
+</div>

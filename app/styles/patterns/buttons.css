@@ -260,7 +260,7 @@ fieldset[disabled] .gh-btn {
 .gh-btn-block svg {
     width: 1em;
     height: 1em;
-    margin-right: 0.5em;
+    margin-right: 0.6em;
     fill: #fff;
 }
 
@@ -329,6 +329,10 @@ svg.gh-btn-icon-right {
 
 .gh-btn-text.yellow span {
     color: color-mod(var(--yellow) l(-10%));
+}
+
+.gh-btn-text.green span {
+    color: var(--green-d1);
 }
 
 .gh-btn-textfield-group span {

@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import ModalComponent from 'ghost-admin/components/modal-base';
 import copyTextToClipboard from 'ghost-admin/utils/copy-text-to-clipboard';
-import {alias, reads} from '@ember/object/computed';
 import {computed} from '@ember/object';
 import {htmlSafe} from '@ember/string';
+import {reads} from '@ember/object/computed';
 import {run} from '@ember/runloop';
 import {inject as service} from '@ember/service';
 import {task, timeout} from 'ember-concurrency';
@@ -49,8 +49,6 @@ export default ModalComponent.extend({
 
     confirm() {},
 
-    allowSelfSignup: alias('settings.membersAllowFreeSignup'),
-
     isStripeConfigured: reads('membersUtils.isStripeEnabled'),
 
     buttonIcon: computed('settings.portalButtonIcon', function () {
@@ -85,9 +83,9 @@ export default ModalComponent.extend({
         return selectedButtonStyle.includes('text');
     }),
 
-    isFreeChecked: computed('settings.portalPlans.[]', 'allowSelfSignup', function () {
+    isFreeChecked: computed('settings.{portalPlans.[],membersSignupAccess}', function () {
         const allowedPlans = this.settings.get('portalPlans') || [];
-        return (this.allowSelfSignup && allowedPlans.includes('free'));
+        return (this.settings.get('membersSignupAccess') === 'all' && allowedPlans.includes('free'));
     }),
 
     isMonthlyChecked: computed('settings.portalPlans.[]', 'isStripeConfigured', function () {
@@ -251,13 +249,14 @@ export default ModalComponent.extend({
     },
 
     updateAllowedPlan(plan, isChecked) {
-        const allowedPlans = this.settings.get('portalPlans') || [];
+        const portalPlans = this.settings.get('portalPlans') || [];
+        const allowedPlans = [...portalPlans];
 
         if (!isChecked) {
             this.settings.set('portalPlans', allowedPlans.filter(p => p !== plan));
         } else {
             allowedPlans.push(plan);
-            this.settings.set('portalPlans', [...allowedPlans]);
+            this.settings.set('portalPlans', allowedPlans);
         }
     },
 

@@ -48,7 +48,7 @@ export default Model.extend(ValidationEngine, {
      * Members settings
      */
     defaultContentVisibility: attr('string'),
-    membersAllowFreeSignup: attr('boolean'),
+    membersSignupAccess: attr('string'),
     membersFromAddress: attr('string'),
     membersSupportAddress: attr('string'),
     membersReplyAddress: attr('string'),
@@ -80,5 +80,10 @@ export default Model.extend(ValidationEngine, {
     mailgunDomain: attr('string'),
     mailgunBaseUrl: attr('string'),
     sesAccessKeyId: attr('string'),
-    sesSecretAccessKey: attr('string')
+    sesSecretAccessKey: attr('string'),
+    /**
+     * OAuth settings
+     */
+    oauthClientId: attr('string'),
+    oauthClientSecret: attr('string')
 });

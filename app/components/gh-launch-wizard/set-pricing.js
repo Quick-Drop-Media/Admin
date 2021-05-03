@@ -46,7 +46,7 @@ export default class GhLaunchWizardSetPricingComponent extends Component {
 
     get isFreeChecked() {
         const allowedPlans = this.settings.get('portalPlans') || [];
-        return (this.settings.get('membersAllowFreeSignup') && allowedPlans.includes('free'));
+        return (this.settings.get('membersSignupAccess') === 'all' && allowedPlans.includes('free'));
     }
 
     get isMonthlyChecked() {
@@ -172,13 +172,14 @@ export default class GhLaunchWizardSetPricingComponent extends Component {
     }
 
     updateAllowedPlan(plan, isChecked) {
-        const allowedPlans = this.settings.get('portalPlans') || [];
+        const portalPlans = this.settings.get('portalPlans') || [];
+        const allowedPlans = [...portalPlans];
 
         if (!isChecked) {
             this.settings.set('portalPlans', allowedPlans.filter(p => p !== plan));
         } else {
             allowedPlans.push(plan);
-            this.settings.set('portalPlans', [...allowedPlans]);
+            this.settings.set('portalPlans', allowedPlans);
         }
 
         this.updatePreviewUrl();
