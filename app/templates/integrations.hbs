@@ -179,6 +179,30 @@
                 </LinkTo>
             </div>
 
+            <div class="apps-grid-cell" data-test-app="growsurf">
+                <LinkTo @route="integrations.growsurf" data-test-link="growsurf">
+                <article class="apps-card-app">
+                    <div class="apps-card-left">
+                        <figure class="apps-card-app-icon id-growsurf" style="background-image:url(assets/icons/growsurf.png); background-size:30px;"></figure>
+                        <div class="apps-card-meta">
+                            <h3 class="apps-card-app-title">GrowSurf</h3>
+                            <p class="apps-card-app-desc">Incentivized referral campaigns</p>
+                        </div>
+                    </div>
+                    <div class="gh-card-right">
+                        <div class="apps-configured">
+                            {{#if this.settings.growsurf}}
+                                <span class="gh-badge" data-test-app-status>Active</span>
+                            {{else}}
+                                <span data-test-app-status>Configure</span>
+                            {{/if}}
+                            {{svg-jar "arrow-right"}}
+                        </div>
+                    </div>
+                </article>
+                </LinkTo>
+            </div>
+
         </div>
     </section>
 
