@@ -554,11 +554,13 @@ textarea.gh-member-details-textarea {
 }
 
 .gh-member-stripe-info {
-    border-bottom: 1px solid var(--whitegrey);
+    margin-top: 24px;
 }
 
-.gh-member-stripe-info:last-of-type {
-    border-bottom: none;
+.gh-member-stripe-info p {
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin: 4px 0 0;
 }
 
 .gh-member-stripe-table {
@@ -730,17 +732,19 @@ textarea.gh-member-details-textarea {
 }
 
 .gh-member-feed {
-    margin: -12px 0;
+    margin: -12px 0 -8px;
 }
 
 .gh-member-feed-row {
     display: flex;
+    align-items: flex-start;
     padding: 0;
 }
 
 .gh-member-feed-activity {
     display: flex;
     align-items: center;
+    padding: 12px 0;
 }
 
 .gh-member-feed-activity svg {
@@ -751,6 +755,7 @@ textarea.gh-member-details-textarea {
 .gh-member-feed-title {
     display: table-cell;
     padding: 10px 0;
+    line-height: 1.4em;
     vertical-align: middle;
     color: var(--darkgrey);
     text-align: left;
@@ -774,9 +779,8 @@ textarea.gh-member-details-textarea {
     color: var(--darkgrey);
 }
 
-.gh-member-btn-expandfeed span {
-    height: 25px;
-    line-height: 25px;
+.gh-member-btn-expandfeed {
+    margin: 8px 0; 
 }
 
 
@@ -1537,7 +1541,6 @@ p.gh-members-import-errordetail:first-of-type {
     }
 }
 
-
 /* Custom product member details */
 .gh-cp-member-email-name {
     display: grid;
@@ -1566,116 +1569,71 @@ p.gh-members-import-errordetail:first-of-type {
 
 /* Member's product list */
 .gh-memberproduct-name {
-    margin-bottom: 6px !important;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.65rem !important;
+    font-weight: 600;
+    margin-bottom: 4px !important;
 }
 
-.gh-memberproduct-actionlist {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 100%;
-    opacity: 0;
+.gh-cp-memberproduct.multiple-subs .gh-memberproduct-name {
+    margin-bottom: 8px !important;
+}
+
+.gh-memberproduct-subcount {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--midgrey);
 }
 
 .gh-memberproduct-list .gh-list-row:hover {
     background: none !important;
 }
 
-.gh-memberproduct-list .gh-list-row:hover .gh-memberproduct-actionlist {
-    opacity: 1;
-}
-
-.gh-memberproduct-actionlist a,
-.gh-memberproduct-actionlist button {
-    line-height: 0;
-    margin-left: 24px;
-    color: var(--darkgrey);
-    font-weight: 500;
-}
-
-.gh-memberproduct-actionlist button.archive {
-    color: var(--red);
-}
-
-.gh-cp-memberproduct-showmore {
-    line-height: 1;
-    margin-top: 5px;
-}
-
-.gh-cp-memberproduct-showmore label {
-    display: inline-block;
-    font-size: 1.3rem;
-    font-weight: 400;
-    line-height: 1.5em;
-    color: var(--middarkgrey);
-    margin: 4px 0 2px;
-    cursor: pointer;
-}
-
-.gh-cp-memberproduct-showmore label:hover {
-    color: var(--darkgrey);
-}
-
 .gh-cp-memberproduct-pricelabel {
     font-weight: 600;
 }
 
-.gh-cp-memberproduct-showmore label span.archived {
+.gh-memberproduct-subscription span.archived {
     background: var(--lightgrey-l2);
     color: var(--midgrey);
     font-size: 1.2rem;
 }
 
-.gh-cp-memberproduct-showmore label svg {
-    width: 9px;
-    height: 9px;
-    margin-right: 2px;
+.gh-cp-memberproduct.multiple-subs .gh-memberproduct-subscription {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--whitegrey);
 }
 
-.gh-cp-memberproduct-showmore label svg path {
-    fill: var(--midgrey);
-}
-
-.gh-cp-memberproduct-showmore .details {
-    display: none;
-    flex-direction: column;
-    font-size: 1.3rem;
-    line-height: 1.7em;
-    color: var(--middarkgrey);
-    margin: 2px 0 16px 15px;
-}
-
-.gh-cp-memberproduct-showmore .details .actions {
-    display: flex;
-    margin-top: 3px;
-}
-
-.gh-cp-memberproduct-showmore .details .actions button span {
-    font-size: 1.3rem;
-}
-
-.gh-cp-memberproduct-showmore input[type=checkbox] {
-    display: none;
-}
-
-.gh-cp-memberproduct-showmore input[type=checkbox]:checked ~ .details {
-    display: flex;
-}
-
-.gh-cp-memberproduct-showmore input[type=checkbox]:checked ~ label svg {
-    transform: rotate(90deg);
+.gh-memberproduct-created {
+    margin-top: 1px;
 }
 
 .gh-memberproduct-archived .gh-memberproduct-name {
     opacity: 0.5;
 }
 
-.gh-memberproduct-add-product .gh-list-data {
-    padding: 12px 0;
+.gh-memberproduct-list-footer {
+    position:relative;
+    margin-top: 12px;
+    margin-bottom: -8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--whitegrey);
+}
+
+.gh-memberproduct-list-footer.min-height {
+    min-height: 74px;
+}
+
+.gh-memberproduct-list-footer .gh-loading-content {
+    padding-bottom: unset;
+    padding-top: 12px;
 }
 
 .gh-btn-addproduct svg path {
     fill: var(--green);
+    stroke: none !important;
 }
 
 .gh-member-product-memberdetails {
@@ -1700,12 +1658,17 @@ p.gh-members-import-errordetail:first-of-type {
 }
 
 .gh-cp-memberproduct-noproduct {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 1.4rem;
     color: var(--midgrey);
     padding: 48px 0;
+}
+
+.gh-cp-memberproduct-noproduct .gh-loading-content {
+    padding-bottom: unset;
 }
 
 .gh-btn-add-memberproduct[disabled],
@@ -1715,4 +1678,39 @@ p.gh-members-import-errordetail:first-of-type {
 
 .gh-btn-add-memberproduct[disabled] span {
     color: var(--midgrey);
+}
+
+.gh-memberproduct-subscription {
+    position: relative;
+}
+
+.gh-memberproduct-subscription .action-menu {
+    position: absolute;
+    top: -4px;
+    right: 0;
+}
+
+.gh-memberproduct-subscription .action-menu .gh-btn-subscription-action {
+    opacity: 0;
+}
+
+.gh-memberproduct-subscription:hover .action-menu .gh-btn-subscription-action,
+.gh-memberproduct-subscription .action-menu .gh-btn-subscription-action.open {
+    opacity: 1;
+}
+
+.gh-cp-memberproduct.multiple-subs .gh-memberproduct-subscription .action-menu {
+    top: 20px;
+}
+
+.gh-memberproduct-subscription .action-menu > .gh-btn span {
+    height: 28px;
+}
+
+.gh-memberproduct-subscription .action-menu > .gh-btn svg {
+    margin: 0;
+}
+
+.gh-member-product-form-block .form-group:last-of-type {
+    margin: 0;
 }

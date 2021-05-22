@@ -211,10 +211,12 @@ textarea {
     resize: vertical;
 }
 
-.gh-input[disabled] {
+.gh-input[disabled],
+.gh-select select[disabled] {
     background: var(--whitegrey-l2);
     color: var(--midlightgrey);
     border-color: var(--whitegrey);
+    opacity: 1.0;
 }
 
 
@@ -555,6 +557,24 @@ textarea {
     transform: translateX(16px);
 }
 
+.for-switch.x-small .input-toggle-component {
+    width: 34px !important;
+    height: 20px !important;
+}
+
+.for-switch.x-small .input-toggle-component:before {
+    height: 16px !important;
+    width: 16px !important;
+}
+
+.for-switch.x-small input:checked + .input-toggle-component:before {
+    transform: translateX(14px);
+}
+
+.for-switch.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
 
 /* Select
 /* ---------------------------------------------------------- */
@@ -641,13 +661,8 @@ textarea {
     border-right: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    padding-right: 0;
+    padding-right: 2px;
     min-width: 0; /* Firefox fix */
-}
-
-.form-group:not(.error) .gh-input-group .gh-input:focus + .gh-input-append {
-    border-color: color-mod(var(--green));
-    box-shadow: inset 0 0 0 1px var(--green);
 }
 
 .gh-input-group .gh-input:focus + .gh-input-append,
@@ -675,6 +690,21 @@ textarea {
     border-bottom-left-radius: 0;
     flex: 1;
     color: var(--midlightgrey);
+}
+
+@media (max-width: 430px) {
+    .gh-input-append {
+        padding: 6px 8px;
+    }
+}
+
+.gh-expandable-content .gh-input-append {
+    border-color: var(--whitegrey-d1);
+}
+
+.form-group:not(.error) .gh-input-group .gh-input:focus + .gh-input-append {
+    border-color: color-mod(var(--green));
+    box-shadow: inset 0 0 0 1px var(--green);
 }
 
 .gh-input-append:before {

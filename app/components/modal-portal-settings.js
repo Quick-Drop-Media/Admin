@@ -1,63 +1,61 @@
 import $ from 'jquery';
 import ModalComponent from 'ghost-admin/components/modal-base';
 import copyTextToClipboard from 'ghost-admin/utils/copy-text-to-clipboard';
-import {computed} from '@ember/object';
-import {htmlSafe} from '@ember/string';
-import {reads} from '@ember/object/computed';
-import {run} from '@ember/runloop';
+import {action, computed} from '@ember/object';
+import {htmlSafe} from '@ember/template';
 import {inject as service} from '@ember/service';
 import {task, timeout} from 'ember-concurrency';
 const ICON_EXTENSIONS = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
-
-export const ICON_MAPPING = [
-    {
-        icon: 'portal-icon-1',
-        value: 'icon-1'
-    },
-    {
-        icon: 'portal-icon-2',
-        value: 'icon-2'
-    },
-    {
-        icon: 'portal-icon-3',
-        value: 'icon-3'
-    },
-    {
-        icon: 'portal-icon-4',
-        value: 'icon-4'
-    },
-    {
-        icon: 'portal-icon-5',
-        value: 'icon-5'
-    }
-];
 
 export default ModalComponent.extend({
     config: service(),
     membersUtils: service(),
     settings: service(),
+    store: service(),
 
     page: 'signup',
     iconExtensions: null,
-    defaultButtonIcons: null,
     isShowModalLink: true,
     customIcon: null,
     showLinksPage: false,
     showLeaveSettingsModal: false,
     freeSignupRedirect: undefined,
     paidSignupRedirect: undefined,
+    prices: null,
+    isPreloading: true,
+    portalPreviewGuid: 'modal-portal-settings',
 
     confirm() {},
 
-    isStripeConfigured: reads('membersUtils.isStripeEnabled'),
+    filteredPrices: computed('prices', 'settings.{portalPlans.[],membersMonthlyPriceId,membersYearlyPriceId}', function () {
+        const monthlyPriceId = this.settings.get('membersMonthlyPriceId');
+        const yearlyPriceId = this.settings.get('membersYearlyPriceId');
+        const portalPlans = this.settings.get('portalPlans');
+        const prices = this.prices || [];
+        return prices.filter((d) => {
+            return [monthlyPriceId, yearlyPriceId].includes(d.id);
+        }).filter((d) => {
+            return d.amount !== 0 && d.type === 'recurring';
+        }).map((price) => {
+            return {
+                ...price,
+                checked: !!portalPlans.find(d => d === price.id)
+            };
+        });
+    }),
 
-    buttonIcon: computed('settings.portalButtonIcon', function () {
-        const defaultIconKeys = this.defaultButtonIcons.map(buttonIcon => buttonIcon.value);
-        return (this.settings.get('portalButtonIcon') || defaultIconKeys[0]);
+    hasPaidPriceChecked: computed('prices', 'settings.portalPlans.[]', function () {
+        const portalPlans = this.settings.get('portalPlans');
+        const prices = this.prices || [];
+        return prices.filter((d) => {
+            return d.amount !== 0 && d.type === 'recurring';
+        }).some((price) => {
+            return !!portalPlans.find(d => d === price.id);
+        });
     }),
 
     backgroundStyle: computed('settings.accentColor', function () {
-        let color = this.get('settings.accentColor') || '#ffffff';
+        let color = this.settings.get('accentColor') || '#ffffff';
         return htmlSafe(`background-color: ${color}`);
     }),
 
@@ -68,8 +66,8 @@ export default ModalComponent.extend({
         return `data-portal`;
     }),
 
-    portalPreviewUrl: computed('buttonIcon', 'page', 'isFreeChecked', 'isMonthlyChecked', 'isYearlyChecked', 'settings.{portalName,portalButton,portalButtonSignupText,portalButtonStyle,accentColor}', function () {
-        const options = this.getProperties(['buttonIcon', 'page', 'isFreeChecked', 'isMonthlyChecked', 'isYearlyChecked']);
+    portalPreviewUrl: computed('page', 'membersUtils.{isFreeChecked,isMonthlyChecked,isYearlyChecked}', 'settings.{portalName,portalButton,portalButtonIcon,portalButtonSignupText,portalButtonStyle,accentColor,portalPlans.[]}', function () {
+        const options = this.getProperties(['page']);
         return this.membersUtils.getPortalPreviewUrl(options);
     }),
 
@@ -83,21 +81,6 @@ export default ModalComponent.extend({
         return selectedButtonStyle.includes('text');
     }),
 
-    isFreeChecked: computed('settings.{portalPlans.[],membersSignupAccess}', function () {
-        const allowedPlans = this.settings.get('portalPlans') || [];
-        return (this.settings.get('membersSignupAccess') === 'all' && allowedPlans.includes('free'));
-    }),
-
-    isMonthlyChecked: computed('settings.portalPlans.[]', 'isStripeConfigured', function () {
-        const allowedPlans = this.settings.get('portalPlans') || [];
-        return (this.isStripeConfigured && allowedPlans.includes('monthly'));
-    }),
-
-    isYearlyChecked: computed('settings.portalPlans.[]', 'isStripeConfigured', function () {
-        const allowedPlans = this.settings.get('portalPlans') || [];
-        return (this.isStripeConfigured && allowedPlans.includes('yearly'));
-    }),
-
     selectedButtonStyle: computed('settings.portalButtonStyle', function () {
         return this.buttonStyleOptions.find((buttonStyle) => {
             return (buttonStyle.name === this.settings.get('portalButtonStyle'));
@@ -106,29 +89,17 @@ export default ModalComponent.extend({
 
     init() {
         this._super(...arguments);
-        this.set('hidePreviewFrame', true);
         this.buttonStyleOptions = [
             {name: 'icon-and-text', label: 'Icon and text'},
             {name: 'icon-only', label: 'Icon only'},
             {name: 'text-only', label: 'Text only'}
         ];
-        this.defaultButtonIcons = ICON_MAPPING;
         this.iconExtensions = ICON_EXTENSIONS;
-        const portalButtonIcon = this.settings.get('portalButtonIcon') || '';
-        const defaultIconKeys = this.defaultButtonIcons.map(buttonIcon => buttonIcon.value);
-        if (portalButtonIcon && !defaultIconKeys.includes(portalButtonIcon)) {
-            this.set('customIcon', this.settings.get('portalButtonIcon'));
-        }
-
-        this.siteUrl = this.config.get('blogUrl');
     },
 
     didInsertElement() {
         this._super(...arguments);
-        this.get('settings.errors').clear();
-        run.later(this, function () {
-            this.set('hidePreviewFrame', false);
-        }, 1200);
+        this.settings.get('errors').clear();
     },
 
     actions: {
@@ -140,6 +111,9 @@ export default ModalComponent.extend({
         },
         toggleYearlyPlan(isChecked) {
             this.updateAllowedPlan('yearly', isChecked);
+        },
+        togglePlan(priceId, event) {
+            this.updateAllowedPlan(priceId, event.target.checked);
         },
         togglePortalButton(showButton) {
             this.settings.set('portalButton', showButton);
@@ -218,8 +192,7 @@ export default ModalComponent.extend({
 
         deleteCustomIcon() {
             this.set('customIcon', null);
-            const defaultIconKeys = ICON_MAPPING.map(buttonIcon => buttonIcon.value);
-            this.settings.set('portalButtonIcon', defaultIconKeys[0]);
+            this.settings.set('portalButtonIcon', this.membersUtils.defaultIconKeys[0]);
         },
 
         selectDefaultIcon(icon) {
@@ -231,8 +204,8 @@ export default ModalComponent.extend({
         },
 
         openStripeSettings() {
+            this.isWaitingForStripeConnection = true;
             this.model.openStripeSettings();
-            this.closeModal();
         },
 
         leaveSettings() {
@@ -262,12 +235,12 @@ export default ModalComponent.extend({
 
     _validateSignupRedirect(url, type) {
         let errMessage = `Please enter a valid URL`;
-        this.get('settings.errors').remove(type);
-        this.get('settings.hasValidated').removeObject(type);
+        this.settings.get('errors').remove(type);
+        this.settings.get('hasValidated').removeObject(type);
 
         if (url === null) {
-            this.get('settings.errors').add(type, errMessage);
-            this.get('settings.hasValidated').pushObject(type);
+            this.settings.get('errors').add(type, errMessage);
+            this.settings.get('hasValidated').pushObject(type);
             return false;
         }
 
@@ -284,6 +257,31 @@ export default ModalComponent.extend({
         }
     },
 
+    finishPreloading: action(async function () {
+        if (this.model.preloadTask?.isRunning) {
+            await this.model.preloadTask;
+        }
+
+        const portalButtonIcon = this.settings.get('portalButtonIcon') || '';
+        if (portalButtonIcon && !this.membersUtils.defaultIconKeys.includes(portalButtonIcon)) {
+            this.set('customIcon', this.settings.get('portalButtonIcon'));
+        }
+
+        this.getAvailablePrices.perform();
+        this.siteUrl = this.config.get('blogUrl');
+
+        this.set('isPreloading', false);
+    }),
+
+    refreshAfterStripeConnected: action(async function () {
+        if (this.isWaitingForStripeConnection) {
+            await this.finishPreloading();
+            this.notifyPropertyChange('page'); // force preview url to recompute
+            this.set('portalPreviewGuid', Date.now().valueOf()); // force preview re-render
+            this.isWaitingForStripeConnection = false;
+        }
+    }),
+
     copyLinkOrAttribute: task(function* () {
         copyTextToClipboard(this.showModalLinkOrAttribute);
         yield timeout(this.isTesting ? 50 : 3000);
@@ -292,10 +290,20 @@ export default ModalComponent.extend({
     saveTask: task(function* () {
         this.send('validateFreeSignupRedirect');
         this.send('validatePaidSignupRedirect');
-        if (this.get('settings.errors').length !== 0) {
+        if (this.settings.get('errors').length !== 0) {
             return;
         }
         yield this.settings.save();
         this.closeModal();
+    }).drop(),
+
+    getAvailablePrices: task(function* () {
+        const products = yield this.store.query('product', {include: 'stripe_prices'});
+        const product = products.firstObject;
+        const prices = product.get('stripePrices');
+        const activePrices = prices.filter((d) => {
+            return !!d.active;
+        });
+        this.set('prices', activePrices);
     }).drop()
 });

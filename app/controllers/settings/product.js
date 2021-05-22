@@ -5,12 +5,20 @@ import {task} from 'ember-concurrency-decorators';
 import {tracked} from '@glimmer/tracking';
 
 export default class ProductController extends Controller {
+    @service config;
+    @service membersUtils;
     @service settings;
 
     @tracked showLeaveSettingsModal = false;
     @tracked showPriceModal = false;
     @tracked priceModel = null;
     @tracked showUnsavedChangesModal = false;
+    @tracked paidSignupRedirect;
+
+    constructor() {
+        super(...arguments);
+        this.siteUrl = this.config.get('blogUrl');
+    }
 
     get product() {
         return this.model;
@@ -23,6 +31,12 @@ export default class ProductController extends Controller {
                 ...d,
                 amount: d.amount / 100
             };
+        }).sort((a, b) => {
+            return a.amount - b.amount;
+        }).sort((a, b) => {
+            return a.currency.localeCompare(b.currency, undefined, {ignorePunctuation: true});
+        }).sort((a, b) => {
+            return (a.active === b.active) ? 0 : (a.active ? -1 : 1);
         });
     }
 
@@ -74,6 +88,25 @@ export default class ProductController extends Controller {
     }
 
     @action
+    async archivePrice(price) {
+        price.active = false;
+        price.amount = price.amount * 100;
+        this.send('savePrice', price);
+    }
+
+    @action
+    async activatePrice(price) {
+        price.active = true;
+        price.amount = price.amount * 100;
+        this.send('savePrice', price);
+    }
+
+    @action
+    openStripeConnect() {
+        alert('Update to use stripe-connect modal (see memberships screen)');
+    }
+
+    @action
     async confirmLeave() {
         this.settings.rollbackAttributes();
         this.showLeaveSettingsModal = false;
@@ -95,12 +128,21 @@ export default class ProductController extends Controller {
     savePrice(price) {
         const stripePrices = this.product.stripePrices.map((d) => {
             if (d.id === price.id) {
-                return EmberObject.create(price);
+                return EmberObject.create({
+                    ...price,
+                    active: !!price.active
+                });
             }
-            return d;
+            return {
+                ...d,
+                active: !!d.active
+            };
         });
         if (!price.id) {
-            stripePrices.push(EmberObject.create(price));
+            stripePrices.push(EmberObject.create({
+                ...price,
+                active: !!price.active
+            }));
         }
         this.product.set('stripePrices', stripePrices);
         this.saveTask.perform();
@@ -111,8 +153,55 @@ export default class ProductController extends Controller {
         this.showPriceModal = false;
     }
 
-    @task({drop: true})
+    @action
+    setPaidSignupRedirect(url) {
+        this.paidSignupRedirect = url;
+    }
+
+    @action
+    validatePaidSignupRedirect() {
+        return this._validateSignupRedirect(this.paidSignupRedirect, 'membersPaidSignupRedirect');
+    }
+
+    @task({restartable: true})
     *saveTask() {
-        return yield this.product.save();
+        this.send('validatePaidSignupRedirect');
+        this.product.validate();
+        if (this.product.get('errors').length !== 0) {
+            return;
+        }
+        if (this.settings.get('errors').length !== 0) {
+            return;
+        }
+        yield this.settings.save();
+        const response = yield this.product.save();
+        if (this.showPriceModal) {
+            this.closePriceModal();
+        }
+        return response;
+    }
+
+    _validateSignupRedirect(url, type) {
+        let errMessage = `Please enter a valid URL`;
+        this.settings.get('errors').remove(type);
+        this.settings.get('hasValidated').removeObject(type);
+
+        if (url === null) {
+            this.settings.get('errors').add(type, errMessage);
+            this.settings.get('hasValidated').pushObject(type);
+            return false;
+        }
+
+        if (url === undefined) {
+            // Not initialised
+            return;
+        }
+
+        if (url.href.startsWith(this.siteUrl)) {
+            const path = url.href.replace(this.siteUrl, '');
+            this.settings.set(type, path);
+        } else {
+            this.settings.set(type, url.href);
+        }
     }
 }
