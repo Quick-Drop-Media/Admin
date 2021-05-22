@@ -88,7 +88,7 @@
 
         <div class="gh-editor-wordcount-container {{if editor.headerClass "small"}}">
             <div class="midgrey-l2 {{if editor.headerClass "f-supersmall pl2 pr2" "f8 pl4 pr3"}} fw4">
-                {{gh-pluralize this.wordCount.wordCount "word"}}
+                {{gh-pluralize this.wordCount.wordCount "word"}} ({{this.readingTime}} min read)
             </div>
             <a href="https://ghost.org/help/using-the-editor/" class="flex {{if editor.headerClass "pa2" "pa3"}}" target="_blank">{{svg-jar "help" class="w4 h4 stroke-midgrey-l2"}}</a>
         </div>

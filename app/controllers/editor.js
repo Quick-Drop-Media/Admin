@@ -25,6 +25,23 @@ const AUTOSAVE_TIMEOUT = 3000;
 // time in ms to force a save if the user is continuously typing
 const TIMEDSAVE_TIMEOUT = 60000;
 
+// https://github.com/TryGhost/SDK/blob/main/packages/helpers/lib/utils/reading-minutes.js
+// TODO: I don't know how to import from there, also why are those function arguments surrounded by brackets?
+function estimatedReadingTimeInMinutes(wordCount, imageCount) {
+    const wordsPerMinute = 275;
+    const wordsPerSecond = wordsPerMinute / 60;
+    let readingTimeSeconds = wordCount / wordsPerSecond;
+
+    // add 12 seconds for the first image, 11 for the second, etc. limiting at 3
+    for (let i = 12; i > 12 - imageCount; i -= 1) {
+        readingTimeSeconds += Math.max(i, 3);
+    }
+
+    let readingTimeMinutes = Math.round(readingTimeSeconds / 60);
+
+    return readingTimeMinutes;
+}
+
 // this array will hold properties we need to watch for this.hasDirtyAttributes
 let watchedProps = [
     'post.scratch',
@@ -303,6 +320,8 @@ export default Controller.extend({
 
         updateWordCount(counts) {
             this.set('wordCount', counts);
+            let readingTimeMinutes = estimatedReadingTimeInMinutes(counts.wordCount, counts.imageCount);
+            this.set('readingTime', Math.max(readingTimeMinutes, 1));
         }
     },
 
@@ -756,6 +775,7 @@ export default Controller.extend({
         this.set('showLeaveEditorModal', false);
         this.set('showPostPreviewModal', false);
         this.set('wordCount', null);
+        this.set('readingTime', null);
 
         // remove the onbeforeunload handler as it's only relevant whilst on
         // the editor route
