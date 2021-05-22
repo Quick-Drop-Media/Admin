@@ -73,6 +73,7 @@ Router.map(function () {
     this.route('integrations.slack', {path: '/integrations/slack'});
     this.route('integrations.amp', {path: '/integrations/amp'});
     this.route('integrations.firstpromoter', {path: '/integrations/firstpromoter'});
+    this.route('integrations.growsurf', {path: '/integrations/grow-surf'});
     this.route('integrations.unsplash', {path: '/integrations/unsplash'});
     this.route('integrations.zapier', {path: '/integrations/zapier'});
 
